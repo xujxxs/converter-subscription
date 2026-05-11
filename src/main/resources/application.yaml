@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: subscription
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: "jdbc:postgresql://${DATABASE_URL}:5432/${DATABASE_NAME}"
+    username: "${DATABASE_USERNAME}"
+    password: "${DATABASE_PASSWORD}"
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+  data:
+    redis: 
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
