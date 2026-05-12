@@ -1,5 +1,5 @@
 CREATE TABLE subscription (
-    username VARCHAR(255) PRIMARY KEY,
-    type VARCHAR(30) NOT NULL,
-    expires TIMESTAMP NOT NULL
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(30) NOT NULL UNIQUE,
+    file_limit BIGINT NOT NULL
 );

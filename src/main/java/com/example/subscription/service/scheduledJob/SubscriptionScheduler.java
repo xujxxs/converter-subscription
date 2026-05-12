@@ -9,9 +9,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.subscription.exception.FreeSubscriptionNotFound;
 import com.example.subscription.model.entity.Subscription;
-import com.example.subscription.model.enums.TypeSubscription;
+import com.example.subscription.model.entity.UserSubscription;
 import com.example.subscription.repository.SubscriptionRepository;
+import com.example.subscription.repository.UserSubscriptionRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,21 +24,27 @@ import lombok.extern.slf4j.Slf4j;
 public class SubscriptionScheduler {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Scheduled(fixedDelay = 5000)
     @Transactional
     public void checkEndSubscription() {
-        List<Subscription> subscriptions = subscriptionRepository.findExpiredSubscriptions(
-                TypeSubscription.PAID,
+        Subscription sub = subscriptionRepository.findByName("FREE")
+            .orElseThrow(() -> {
+                log.error("Subscription 'FREE' not found");
+                return new FreeSubscriptionNotFound();
+            });
+
+        List<UserSubscription> subscriptions = userSubscriptionRepository.findExpiredSubscriptions(
                 LocalDateTime.now(), 
                 PageRequest.of(0, 100)
-            ).stream().map(sub -> {
-                sub.setType(TypeSubscription.FREE);
-                redisTemplate.delete("type_subscription::" + sub.getUsername());
-                return sub;
+            ).stream().map(userSub -> {
+                userSub.setSubscription(sub);
+                redisTemplate.delete("type_subscription::" + userSub.getUsername());
+                return userSub;
             }).toList();
 
-        subscriptionRepository.saveAll(subscriptions);
+        userSubscriptionRepository.saveAll(subscriptions);
     }
 }

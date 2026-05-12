@@ -3,7 +3,7 @@ package com.example.subscription.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.subscription.model.enums.TypeSubscription;
+import com.example.subscription.model.dto.SubscriptionTypeDto;
 import com.example.subscription.service.SubscriptionService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("/status")
-    public ResponseEntity<TypeSubscription> getMethodName(
+    public ResponseEntity<SubscriptionTypeDto> getMethodName(
         @RequestHeader("X-User-Login") String username
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(subscriptionService.getStatus(username));
+                .body(subscriptionService.getSubscriptionType(username));
     }
 }

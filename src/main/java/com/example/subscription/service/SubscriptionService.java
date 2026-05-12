@@ -1,11 +1,11 @@
 package com.example.subscription.service;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.subscription.exception.UsernameNotFound;
-import com.example.subscription.model.enums.TypeSubscription;
-import com.example.subscription.repository.SubscriptionRepository;
+import com.example.subscription.model.dto.SubscriptionTypeDto;
+import com.example.subscription.model.entity.UserSubscription;
+import com.example.subscription.repository.UserSubscriptionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,11 +13,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SubscriptionService {
 
-    private final SubscriptionRepository subscriptionRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
-    @Cacheable(value = "type_subscription", key = "#username")
-    public TypeSubscription getStatus(String username) {
-        return subscriptionRepository.findById(username)
-            .orElseThrow(() -> new UsernameNotFound(username)).getType();
+    public SubscriptionTypeDto getSubscriptionType(String username) {
+        UserSubscription userSubscription = userSubscriptionRepository.findByIdWithFetchSubscription(username)
+            .orElseThrow(() -> new UsernameNotFound(username));
+
+        return new SubscriptionTypeDto(
+            userSubscription.getSubscription().getName(), 
+            userSubscription.getSubscription().getFileLimit());
     }
 }
