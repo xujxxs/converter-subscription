@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-init-subscription
+      author: jxkrbdy
+      changes:
+        - sqlFile:
+            path: db/changelog/sql/001-create-subscription.sql
+      rollback:
+        - sql: "DROP TABLE IF EXISTS subscription CASCADE;"
+  - changeSet:
+      id: 002-init-user-subscription
+      author: jxkrbdy
+      changes:
+        - sqlFile:
+            path: db/changelog/sql/002-create-user-subscription.sql
+      rollback:
+        - sql: "DROP TABLE IF EXISTS user_subscription CASCADE;"
+  - changeSet:
+      id: 003-add-free-subscription
+      author: jxkrbdy
+      changes:
+        - sqlFile:
+            path: db/changelog/sql/003-insert-free-subscription.sql
+      rollback:
+        - sql: "DELETE FROM subscription WHERE name='FREE';"

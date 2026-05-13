@@ -1,0 +1,5 @@
+CREATE TABLE subscription (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(30) NOT NULL UNIQUE,
+    file_limit BIGINT NOT NULL
+);

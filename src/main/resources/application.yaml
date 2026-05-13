@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: subscription
+  kafka:
+    bootstrap-servers:
+    - "${KAFKA_URL}"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: "jdbc:postgresql://${DATABASE_URL}:5432/${DATABASE_NAME}"
+    username: "${DATABASE_USERNAME}"
+    password: "${DATABASE_PASSWORD}"
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+queue:
+  kafka:
+    topic:
+      subscription-del-cache: subscription-del-cache
